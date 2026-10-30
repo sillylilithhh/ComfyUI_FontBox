@@ -1,7 +1,9 @@
 # ComfyUI_FontBox
 A ComfyUI bbox editor geared towards text manipulation for FLUX.3 Image Klein.
 
-<img width="538" height="905" alt="image" src="https://github.com/user-attachments/assets/f3947f3e-6fb8-474b-90e4-89ec005b2209" />
+<p align="center">
+<img src="https://github.com/user-attachments/assets/926b111b-5458-4343-ae67-5d11afb0bfd7" width="600">
+</p>
 
 # Installation
 
