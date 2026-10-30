@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {regions,regionKey,targetsFor,moveGroup,resizeGroup} from '../frontend/geometry.js';
+const near=(a,b)=>assert(Math.abs(a-b)<1e-9,`${a} != ${b}`),none={x:[],y:[]},screen={x:1000,y:500},min={w:.001,h:.002};
+const a={x:.1,y:.1,w:.2,h:.1},b={x:.55,y:.3,w:.1,h:.2};
+let r=moveGroup([a,b],.1,.05,none,screen);near(r.geometries[0].x,.2);near(r.geometries[1].x,.65);near(r.geometries[1].y,.35);
+r=moveGroup([a,b],1,1,none,screen);near(r.geometries[1].x+r.geometries[1].w,1);near(r.geometries[0].x-a.x,r.geometries[1].x-b.x);
+const guide={axis:'x',position:.5,kind:'guide',id:'g'},targets={x:[guide],y:[]};
+r=moveGroup([a],.195,0,targets,screen);near(r.geometries[0].x+r.geometries[0].w,.5);assert.equal(r.snaps[0].kind,'guide');
+r=resizeGroup([a],'e',.197,0,false,targets,screen,min);near(r.geometries[0].x+r.geometries[0].w,.5);near(r.geometries[0].h,.1);
+r=resizeGroup([a,b],'e',.1,.1,false,none,screen,min);near(r.geometries[0].w,.3);near(r.geometries[1].w,.2);near(r.geometries[0].h,.1);near(r.geometries[1].h,.2);
+r=resizeGroup([a,b],'se',.1,.07,true,none,screen,min);near(r.geometries[0].w/r.geometries[0].h,a.w/a.h);near(r.geometries[1].w/r.geometries[1].h,b.w/b.h);near(r.geometries[0].w/a.w,r.geometries[1].w/b.w);
+r=resizeGroup([a],'se',.199,.1,true,targets,screen,min);near(r.geometries[0].x+r.geometries[0].w,.5);near(r.geometries[0].w/r.geometries[0].h,2);assert(r.snaps.length);
+for(const h of ['nw','n','ne','e','se','s','sw','w']){r=resizeGroup([a],h,.4,.3,true,none,screen,min);const g=r.geometries[0];near(g.w/g.h,2);assert(g.x>=-1e-9&&g.y>=-1e-9&&g.x+g.w<=1+1e-9&&g.y+g.h<=1+1e-9);}
+r=resizeGroup([{x:.8,y:.8,w:.1,h:.1}],'se',.5,.5,true,none,screen,min);near(r.geometries[0].x+r.geometries[0].w,1);near(r.geometries[0].y+r.geometries[0].h,1);
+const all=regions([{...a,id:'a',action:'new'},{...b,id:'b',action:'new'}]);
+let t=targetsFor(all,new Set([regionKey('a')]),[{id:'g',axis:'x',position:.4}],{boxes:true,guides:false});assert.equal(t.x.length,3);assert(t.x.every(v=>v.id===regionKey('b')));
+t=targetsFor(all,new Set([regionKey('a')]),[{id:'g',axis:'x',position:.4}],{boxes:false,guides:true});assert.equal(t.x.length,1);assert.equal(t.x[0].kind,'guide');
+assert.deepEqual(targetsFor(all,new Set(),[],{boxes:false,guides:false}),none);
+const boxTarget={axis:'x',position:.7,kind:'box',id:'b'};r=resizeGroup([a],'e',.395,0,false,{x:[boxTarget],y:[]},screen,min);near(r.geometries[0].x+r.geometries[0].w,.7);assert.equal(r.snaps[0].kind,'box');
+console.log('Geometry: group movement, shared edge deltas, all aspect-locked handles, bounds, guide/box snapping and independent target switches passed.');

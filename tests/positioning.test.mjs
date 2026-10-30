@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {placeTaskbar} from '../frontend/positioning.js';
+const place=box=>placeTaskbar(box,640,320,273,38);
+let p=place({left:200,top:120,right:400,bottom:200});
+assert.equal(p.side,'above');assert.equal(p.top,74);assert.equal(p.left,163.5);
+p=place({left:200,top:5,right:400,bottom:70});assert.equal(p.side,'below');assert.equal(p.top,78);
+p=place({left:200,top:230,right:400,bottom:318});assert.equal(p.side,'above');assert.equal(p.top,184);
+p=place({left:0,top:0,right:640,bottom:320});assert(p.visible);assert(p.top>=8&&p.top+38<=312);
+p=place({left:-50,top:100,right:10,bottom:200});assert.equal(p.left,8);
+p=place({left:600,top:100,right:800,bottom:200});assert.equal(p.left,359);
+assert.equal(place({left:0,top:-200,right:100,bottom:-10}).visible,false);
+assert.equal(place({left:650,top:20,right:700,bottom:50}).visible,false);
+p=placeTaskbar({left:0,top:5,right:280,bottom:310},296,320,273,38);assert(p.left>=8&&p.left+273<=288);
+console.log('Context taskbar: above/below flipping, viewport docking, horizontal clamping, small viewports, and offscreen hiding passed.');

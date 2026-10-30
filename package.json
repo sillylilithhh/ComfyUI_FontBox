@@ -1,0 +1,14 @@
+{
+  "name": "comfyui-fontbox",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/model.test.mjs && node tests/geometry.test.mjs && node tests/positioning.test.mjs && node tests/background.test.mjs",
+    "build": "node scripts/build.mjs",
+    "test:dom": "node tests/editor.test.mjs && node tests/startup.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
